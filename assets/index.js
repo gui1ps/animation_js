@@ -15,7 +15,7 @@ class dot {
         this.ctx=this.canvas.getContext("2d");//Contexto do canvas
         this.w=this.canvas.width / 2;//Largura do ponto
         this.h=this.canvas.height /2;//Altura do ponto
-        this.row=10;
+        this.row=1;
         this.directz=this.escolherz();
     }
     spaw(){//Método para dar spaw em um ponto
@@ -124,7 +124,7 @@ class dot {
         }
     }
     ligar(outroponto){
-        this.ctx.strokeStyle="red";
+        this.ctx.strokeStyle="White";
         this.ctx.lineWidth =0.1;
         this.ctx.beginPath();
         this.ctx.moveTo(this.x, this.y);
@@ -137,19 +137,31 @@ class dot {
         let deltpointendx;
         let deltpointendy;
 
-        if(outroponto.y<this.y){
-            deltpointstarty=outroponto.y;
-            deltpointstartx=outroponto.x;
-            deltpointendx=this.x;
-            deltpointendy=this.y;
-        }else{
-            deltpointstarty=this.y;
-            deltpointstartx=this.x;
-            deltpointendx=outroponto.x;
-            deltpointendy=outroponto.y;
+        if(outroponto.y<this.y && outroponto.x<this.x){
+            deltpointstarty=outroponto.y-this.row;
+            deltpointstartx=outroponto.x-this.row;
+            deltpointendx=this.x+this.row;
+            deltpointendy=this.y+this.row;
         }
+        else if(outroponto.y<this.y && outroponto.x>this.x){
+            deltpointstarty=outroponto.y-this.row;
+            deltpointstartx=outroponto.x+this.row;
+            deltpointendx=this.x-this.row;
+            deltpointendy=this.y+this.row;
+            }
+        else if(outroponto.y>this.y && outroponto.x>this.x){
+            deltpointstarty=outroponto.y+this.row;
+            deltpointstartx=outroponto.x+this.row;
+            deltpointendx=this.x-this.row;
+            deltpointendy=this.y-this.row;
+            }
+        else{
+            deltpointstarty=outroponto.y+this.row;
+            deltpointstartx=outroponto.x-this.row;
+            deltpointendx=this.x+this.row;
+            deltpointendy=this.y-this.row;
+            }
         this.ctx.clearRect(deltpointstartx,deltpointstarty,(deltpointendx-deltpointstartx),(deltpointendy-deltpointstarty));
-        //this.ctx.fillRect(deltpointstartx,deltpointstarty,(deltpointendx-deltpointstartx),(deltpointendy-deltpointstarty));
     }
     animalinha(outroponto){
         this.ligar(outroponto);
@@ -175,7 +187,7 @@ function animar() {//Função que pega ponto por ponto na lista de pontos e os a
 
 
 
-//encher(60);
+encher(60);
 
 let p1=new dot(ponto);
 p1.spaw();
@@ -183,13 +195,12 @@ let p2=new dot(ponto);
 p2.spaw();
 
 function animarteste() {//Função que pega ponto por ponto na lista de pontos e os anima
+    p2.apagarlinha(p1);
     p1.move();
     p2.move();
-    //p2.ligar(p1);
-    p1.apagarlinha(p2);
     p1.ligar(p2);
     requestAnimationFrame(animarteste);
 }
 
 requestAnimationFrame(animarteste);
-//requestAnimationFrame(animar);
+requestAnimationFrame(animar);
