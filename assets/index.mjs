@@ -1,13 +1,14 @@
+
 const ponto=document.getElementById("bolinha");
 ponto.width=window.innerWidth;//Definição dos limites do canvas
 ponto.height=window.innerHeight;
 let lista=[];//Lista que vai receber vários pontos
 
 
-class dot {
+class Dot {
     constructor(canvas){
         this.axle=Math.floor(Math.random()*3)//Escolhe de forma aleatória se o ponto irá se movimentar em x, y ou diagonal
-        this.vel=Math.floor(Math.random()*(0.25)+1);//Esolhe de forma aleatória a velocidade do ponto (a mínima é 1 e a máxima é 6 pixels por loop)
+        this.vel=Math.floor(Math.random()*0.5+1);//Esolhe de forma aleatória a velocidade do ponto (a mínima é 1 e a máxima é 6 pixels por loop)
         this.direct=Math.random();//Esse atributo define qual vai ser o sentido inicial dos pontos que se movimentam em x ou em y (para direita, esquerda,cima ou baixo)
         this.canvas=canvas;//Esse atributo se refere ao canvas em que os pontos serão desenhados
         this.x=Math.floor(Math.random() * (this.canvas.width ) + 1);//Define um ponto x aleatório no espaço do canvas para spawnar o ponto
@@ -17,6 +18,7 @@ class dot {
         this.h=this.canvas.height /2;//Altura do ponto
         this.row=1;
         this.directz=this.escolherz();
+        this.convexoes=[];
     }
     spaw(){//Método para dar spaw em um ponto
         this.ctx.fillStyle = "white";
@@ -67,6 +69,11 @@ class dot {
         }
     }
     move(){//Função que define como que o ponto vai se comportar baseado em seu tipo de movimento
+
+        for(let i of this.convexoes){
+            this.apagarlinha(i);
+        }
+
         if(this.axle==0){//Padrões de movimento em X
             if(this.direct<=0.5){
                 this.mudarrota();
@@ -122,6 +129,9 @@ class dot {
                 this.x-=this.vel;
                 this.spaw();}
         }
+        for(let i of this.convexoes){
+            this.ligar(i);
+        }
     }
     ligar(outroponto){
         this.ctx.strokeStyle="White";
@@ -163,16 +173,38 @@ class dot {
             }
         this.ctx.clearRect(deltpointstartx,deltpointstarty,(deltpointendx-deltpointstartx),(deltpointendy-deltpointstarty));
     }
-    animalinha(outroponto){
-        this.ligar(outroponto);
-        this.apagarlinha(outroponto);
+    adicionaconvexao(outroponto){
+        this.convexoes.push(outroponto);
     }
-    
 }
+
+class Pointer{
+    constructor(){
+        this.x;
+        this.t;
+        this.row=260;
+        this.objctsinRaow=[];
+    }
+    atualizarXy(x,y){
+        this.x=x;
+        this.y=y;
+    }
+    getXy(){
+        console.log(`X: ${this.x} | Y: ${this.y}`);
+    }
+
+}
+
+const pointer=new Pointer();
+
+document.addEventListener("mousemove",function(event){
+    pointer.atualizarXy(event.clientX,event.clientY);
+    pointer.getXy();
+});
 
 function encher(qntd){//Função que spawna vários pontos e os adiciona na lista
     for(let i=0;i<qntd;i++){
-        let p=new dot(ponto);
+        let p=new Dot(ponto);
         p.spaw();
         lista.push(p);
     }    
@@ -185,22 +217,17 @@ function animar() {//Função que pega ponto por ponto na lista de pontos e os a
     requestAnimationFrame(animar);
 }
 
-
-
 encher(60);
 
-let p1=new dot(ponto);
-p1.spaw();
-let p2=new dot(ponto);
-p2.spaw();
+lista[5].adicionaconvexao(lista[6]);
+lista[7].adicionaconvexao(lista[8]);
 
+
+/*
 function animarteste() {//Função que pega ponto por ponto na lista de pontos e os anima
-    p2.apagarlinha(p1);
-    p1.move();
-    p2.move();
-    p1.ligar(p2);
+    lista[5].animalinha(lista[6]);
     requestAnimationFrame(animarteste);
 }
-
-requestAnimationFrame(animarteste);
+*/
+//requestAnimationFrame(animarteste);
 requestAnimationFrame(animar);
